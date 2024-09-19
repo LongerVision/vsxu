@@ -149,7 +149,12 @@ protected:
       return m_value == static_cast<const value<tag, T> *>(other)->m_value;
     }
     bool less(const json_value * other) const override {
-        return m_value < static_cast<const value<tag, T> *>(other)->m_value;
+        if constexpr (std::is_same<T, std::nullptr_t>::value) {
+            // For nullptr, no ordering comparison makes sense; decide how to handle this
+            return false;  // Example: Always return false for nullptr comparisons
+        } else {
+            return m_value < static_cast<const value<tag, T>*>(other)->m_value;
+        }
     }
 
     const T m_value;
